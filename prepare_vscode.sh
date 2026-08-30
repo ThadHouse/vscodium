@@ -3,10 +3,42 @@
 
 set -e
 
+if [[ -n "${VSCODIUM_CUSTOM_ENV:-}" ]]; then
+  if [[ ! -f "${VSCODIUM_CUSTOM_ENV}" ]]; then
+    echo "Custom environment file not found: ${VSCODIUM_CUSTOM_ENV}" >&2
+    exit 1
+  fi
+
+  # shellcheck disable=SC1090
+  . "${VSCODIUM_CUSTOM_ENV}"
+fi
+
+if [[ -n "${VSCODIUM_CUSTOM_SRC:-}" && ! -d "${VSCODIUM_CUSTOM_SRC}" ]]; then
+  echo "Custom source directory not found: ${VSCODIUM_CUSTOM_SRC}" >&2
+  exit 1
+fi
+
+VSCODIUM_CUSTOM_PRODUCT_PATH=""
+if [[ -n "${VSCODIUM_CUSTOM_PRODUCT_JSON:-}" ]]; then
+  if [[ ! -f "${VSCODIUM_CUSTOM_PRODUCT_JSON}" ]]; then
+    echo "Custom product file not found: ${VSCODIUM_CUSTOM_PRODUCT_JSON}" >&2
+    exit 1
+  fi
+
+  VSCODIUM_CUSTOM_PRODUCT_PATH="$(
+    cd "$( dirname "${VSCODIUM_CUSTOM_PRODUCT_JSON}" )"
+    echo "$( pwd -P )/$( basename "${VSCODIUM_CUSTOM_PRODUCT_JSON}" )"
+  )"
+fi
+
 if [[ "${VSCODE_QUALITY}" == "insider" ]]; then
   cp -rp src/insider/* vscode/
 else
   cp -rp src/stable/* vscode/
+fi
+
+if [[ -n "${VSCODIUM_CUSTOM_SRC:-}" ]]; then
+  cp -rp "${VSCODIUM_CUSTOM_SRC}/." vscode/
 fi
 
 cp -f LICENSE vscode/LICENSE.txt
@@ -123,7 +155,11 @@ fi
 
 setpath_json "product" "tunnelApplicationConfig" '{}'
 
-jsonTmp=$( jq -s '.[0] * .[1]' product.json ../product.json )
+if [[ -n "${VSCODIUM_CUSTOM_PRODUCT_PATH}" ]]; then
+  jsonTmp=$( jq -s '.[0] * .[1] * .[2]' product.json ../product.json "${VSCODIUM_CUSTOM_PRODUCT_PATH}" )
+else
+  jsonTmp=$( jq -s '.[0] * .[1]' product.json ../product.json )
+fi
 echo "${jsonTmp}" > product.json && unset jsonTmp
 
 cat product.json
