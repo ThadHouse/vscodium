@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [[ "${SHOULD_BUILD_CLI}" == "no" ]]; then
+  return 0
+fi
+
 set -ex
 
 cd cli

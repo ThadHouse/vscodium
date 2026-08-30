@@ -1,0 +1,92 @@
+name: CI - WPICode macOS archives
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - "2027"
+    paths-ignore:
+      - "**/*.md"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+
+concurrency:
+  group: wpicode-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_NAME: WPICode 2027
+  ARCHIVE_NAME: WPICode-2027
+  BINARY_NAME: wpicode-2027
+  CI_BUILD: yes
+  DISABLE_UPDATE: yes
+  GH_REPO_PATH: ${{ github.repository }}
+  GITHUB_BRANCH: ${{ github.event.pull_request.head.sha || github.sha }}
+  ORG_NAME: WPILib
+  OS_NAME: osx
+  PRODUCT_NAME: WPICode 2027
+  SHOULD_BUILD_CLI: no
+  SHOULD_BUILD_DMG: no
+  SHOULD_BUILD_REH: no
+  SHOULD_BUILD_REH_WEB: no
+  SHOULD_BUILD_ZIP: yes
+  VSCODE_QUALITY: stable
+  WPICODE_YEAR: "2027"
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            vscode_arch: x64
+          - runner: macos-14
+            vscode_arch: arm64
+    env:
+      VSCODE_ARCH: ${{ matrix.vscode_arch }}
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ env.GITHUB_BRANCH }}
+          persist-credentials: false
+
+      - name: Validate WPICode configuration
+        run: ./test_wpicode.sh
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Clone pinned VS Code source
+        run: ./get_repo.sh
+
+      - name: Build architecture
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_BUILD: yes
+        run: ./build.sh
+
+      - name: Create and verify portable archive
+        run: ./prepare_wpicode_assets.sh
+
+      - name: Upload portable archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: WPICode-2027-darwin-${{ matrix.vscode_arch }}
+          path: assets/
+          if-no-files-found: error
+          retention-days: 7

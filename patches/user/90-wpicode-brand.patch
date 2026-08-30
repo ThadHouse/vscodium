@@ -1,0 +1,41 @@
+diff --git a/build/lib/policies/render.ts b/build/lib/policies/render.ts
+index db927cb4..786b4172 100644
+--- a/build/lib/policies/render.ts
++++ b/build/lib/policies/render.ts
+@@ -189,10 +189,10 @@ export function renderProfileManifest(appName: string, bundleIdentifier: string,
+ <dict>
+     <key>pfm_app_url</key>
+-    <string>https://github.com/VSCodium/vscodium</string>
++    <string>https://github.com/!!GH_REPO_PATH!!</string>
+     <key>pfm_description</key>
+     <string>${appName} Managed Settings</string>
+     <key>pfm_documentation_url</key>
+-    <string>https://github.com/VSCodium/vscodium</string>
++    <string>https://github.com/!!GH_REPO_PATH!!</string>
+     <key>pfm_domain</key>
+     <string>${bundleIdentifier}</string>
+     <key>pfm_format_version</key>
+@@ -259,7 +259,7 @@ ${policyEntries}
+ 			</dict>
+ 		</array>
+ 		<key>PayloadDescription</key>
+-		<string>This profile manages ${appName}. For more information see https://github.com/VSCodium/vscodium</string>
++		<string>This profile manages ${appName}. For more information see https://github.com/!!GH_REPO_PATH!!</string>
+ 		<key>PayloadDisplayName</key>
+ 		<string>${appName}</string>
+ 		<key>PayloadIdentifier</key>
+diff --git a/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts b/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
+index 140025fe..c12d4b31 100644
+--- a/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
++++ b/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
+@@ -973,8 +973,8 @@ CommandsRegistry.registerCommand({
+ 				if (requireReload) {
+ 					notificationService.prompt(
+ 						Severity.Info,
+-						vsixs.length > 1 ? localize('InstallVSIXs.successReload', "Completed installing extensions. Please reload VSCodium to enable them.")
+-							: localize('InstallVSIXAction.successReload', "Completed installing extension. Please reload VSCodium to enable it."),
++						vsixs.length > 1 ? localize('InstallVSIXs.successReload', "Completed installing extensions. Please reload !!APP_NAME!! to enable them.")
++							: localize('InstallVSIXAction.successReload', "Completed installing extension. Please reload !!APP_NAME!! to enable it."),
+ 						[{
+ 							label: localize('InstallVSIXAction.reloadNow', "Reload Now"),
+ 							run: () => hostService.reload()

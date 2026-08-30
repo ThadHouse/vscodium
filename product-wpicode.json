@@ -1,0 +1,44 @@
+{
+  "wpicodeYear": "2027",
+  "nameShort": "WPICode 2027",
+  "nameLong": "WPICode 2027",
+  "applicationName": "wpicode-2027",
+  "dataFolderName": ".wpicode-2027",
+  "sharedDataFolderName": ".wpicode-2027-shared",
+  "quality": "stable",
+  "urlProtocol": "wpicode-2027",
+  "serverApplicationName": "wpicode-server-2027",
+  "serverDataFolderName": ".wpicode-server-2027",
+  "tunnelApplicationName": "wpicode-2027-tunnel",
+  "linuxIconName": "wpicode-2027",
+  "darwinBundleIdentifier": "org.wpilib.wpicode2027",
+  "darwinProfileUUID": "21036122-1BC2-4609-AC5F-4AD1FFF9E760",
+  "darwinProfilePayloadUUID": "A7D964EC-B16B-4214-B9B6-28A7F450BFD9",
+  "win32AppUserModelId": "WPILib.WPICode.2027",
+  "win32DirName": "WPICode 2027",
+  "win32MutexName": "wpicode2027",
+  "win32NameVersion": "WPICode 2027",
+  "win32RegValueName": "WPICode2027",
+  "win32ShellNameShort": "WPICode 2027",
+  "win32AppId": "{{9BA6FB11-F513-4D26-B12B-3C731D68FA9E}",
+  "win32x64AppId": "{{FDC092B2-4E9B-4142-BCE1-C460160E9F89}",
+  "win32arm64AppId": "{{77D36FDE-4384-4AA0-A186-22649D791809}",
+  "win32UserAppId": "{{F63A925E-03C1-49F2-AB00-746732EEB93B}",
+  "win32x64UserAppId": "{{87BD6FE6-AB6E-4904-B864-3C15833BF2B3}",
+  "win32arm64UserAppId": "{{F35281C3-7491-4756-9312-E747BB4B287F}",
+  "win32TunnelServiceMutex": "wpicode2027-tunnelservice",
+  "win32TunnelMutex": "wpicode2027-tunnel",
+  "win32ContextMenu": {
+    "x64": {
+      "clsid": "C239FB07-2FE4-455A-9CBB-5E647B159E6F"
+    },
+    "arm64": {
+      "clsid": "23593ECA-35F3-4950-BEFA-9A1ECBA525E6"
+    }
+  },
+  "documentationUrl": "https://docs.wpilib.org",
+  "licenseUrl": "https://github.com/wpilibsuite/wpicode/blob/master/LICENSE",
+  "releaseNotesUrl": "https://github.com/wpilibsuite/wpicode/releases",
+  "reportIssueUrl": "https://github.com/wpilibsuite/wpicode/issues/new",
+  "requestFeatureUrl": "https://github.com/wpilibsuite/wpicode/issues/new"
+}

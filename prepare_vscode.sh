@@ -3,11 +3,20 @@
 
 set -e
 
+. ./wpicode.env.sh
+
+if [[ "${VSCODE_QUALITY}" != "stable" ]]; then
+  echo "WPICode only supports stable VSCodium builds" >&2
+  exit 1
+fi
+
 if [[ "${VSCODE_QUALITY}" == "insider" ]]; then
   cp -rp src/insider/* vscode/
 else
   cp -rp src/stable/* vscode/
 fi
+
+cp -rp src/wpicode/* vscode/
 
 cp -f LICENSE vscode/LICENSE.txt
 
@@ -123,7 +132,7 @@ fi
 
 setpath_json "product" "tunnelApplicationConfig" '{}'
 
-jsonTmp=$( jq -s '.[0] * .[1]' product.json ../product.json )
+jsonTmp=$( jq -s '.[0] * .[1] * .[2]' product.json ../product.json ../product-wpicode.json )
 echo "${jsonTmp}" > product.json && unset jsonTmp
 
 cat product.json
@@ -144,7 +153,7 @@ echo "ORG_NAME=\"${ORG_NAME}\""
 echo "TUNNEL_APP_NAME=\"${TUNNEL_APP_NAME}\""
 
 if [[ "${DISABLE_UPDATE}" == "yes" ]]; then
-  mv ../patches/00-update-disable.patch.yet ../patches/00-update-disable.patch
+  apply_patch ../patches/00-update-disable.patch.yet
 fi
 
 for file in ../patches/*.json; do
@@ -233,7 +242,7 @@ cp package.json{,.bak}
 
 setpath "package" "version" "${RELEASE_VERSION%-insider}"
 
-replace 's|Microsoft Corporation|VSCodium|' package.json
+replace "s|Microsoft Corporation|${ORG_NAME}|" package.json
 
 cp resources/server/manifest.json{,.bak}
 
@@ -250,8 +259,10 @@ replace "s|\\[\\/\\* BUILTIN_ANNOUNCEMENTS \\*\\/\\]|$( tr -d '\n' < ../announce
 
 ../undo_telemetry.sh
 
-replace 's|Microsoft Corporation|VSCodium|' build/lib/electron.ts
-replace 's|([0-9]) Microsoft|\1 VSCodium|' build/lib/electron.ts
+replace "s|Microsoft Corporation|${ORG_NAME}|" build/lib/electron.ts
+replace "s|([0-9]) Microsoft|\1 ${ORG_NAME}|" build/lib/electron.ts
+replace "s|'VS Code HelpBook'|product.nameLong + ' HelpBook'|g" build/lib/electron.ts
+replace "s|'VS Code workspace file'|[product.nameLong + ' workspace file']|" build/lib/electron.ts
 
 if [[ "${OS_NAME}" == "linux" ]]; then
   # microsoft adds their apt repo to sources
